@@ -142,6 +142,7 @@ const Home = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [apiData, setApiData] = useState<any>();
   const [catrgory, setCategory] = useState<string>("");
+  const [items, setItems] = useState([]);
   useEffect(() => {
     Promise.all([getEmptyBins, getRefillCards, getReturnItems, getLastRackRefill,]).then((response) => {
       setApiData(response)
@@ -193,38 +194,49 @@ const Home = () => {
               <Grid item xs={6} sm={4} md={3} lg={3}>
                 <DashboardCard onClick={() => {
                   setCategory('Empty Bins');
+                  if (apiData) {
+                    setItems(apiData[0].data.result.items)
+                  }
+
                   setOpen(true)
+
                 }} count={apiData ? apiData[0].data.result.totalCount : 0} info="Current Count" title="Empty Bins" bgColor="#795548" />
               </Grid>
               <Grid item xs={6} sm={4} md={3} lg={3}>
                 <DashboardCard onClick={() => {
                   setCategory('Refill Cards');
+                  if (apiData) {
+                    setItems(apiData[1].data.result.items)
+                  }
                   setOpen(true)
                 }} count={apiData ? apiData[1].data.result.totalCount : 0} info="Current Count" title="Refill Cards" bgColor="#FF9800" />
               </Grid>
               <Grid item xs={6} sm={4} md={3} lg={3}>
                 <DashboardCard onClick={() => {
                   setCategory('Return Items');
+                  if (apiData) {
+                    setItems(apiData[2].data.result.items)
+                  }
                   setOpen(true)
                 }} count={apiData ? apiData[2].data.result.totalCount : 0} info="Current Count" title="Return Items" bgColor="#9575CD" />
               </Grid>
               <Grid item xs={6} sm={4} md={3} lg={3}>
                 <DashboardCard onClick={() => {
-                  setCategory('Last Rack Refill');
-                  setOpen(true)
+                  // setCategory('Last Rack Refill');
+                  // setOpen(true)
                 }} count="2" info="Hours ago" title="Last Rack Refill" bgColor="#F48FB1" />
               </Grid>
 
               <Grid item xs={6} sm={4} md={3} lg={3}>
                 <DashboardCard onClick={() => {
-                  setCategory('Delivered Items');
-                  setOpen(true)
+                  // setCategory('Delivered Items');
+                  // setOpen(true)
                 }} count="03" info="Current Count" title="Delivered Items" bgColor="#00897B" />
               </Grid>
               <Grid item xs={6} sm={4} md={3} lg={3}>
                 <DashboardCard onClick={() => {
-                  setCategory('Other Items');
-                  setOpen(true)
+                  // setCategory('Other Items');
+                  // setOpen(true)
                 }} count="08" info="Current Count" title="Other Items" bgColor="#03A9F4" />
               </Grid>
             </Grid>
@@ -248,17 +260,20 @@ const Home = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
-                  <TableRow
-                    key={row.name}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="right">{row.countedBins}</TableCell>
-                  </TableRow>
-                ))}
+                {items && <>
+                  {items.map((row: any) => (
+                    <TableRow
+                      key={row.categoryName || row['supplyName']}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {row['categoryName'] || row['supplyName']}
+                      </TableCell>
+                      <TableCell align="right">{row.count}</TableCell>
+                    </TableRow>
+                  ))}
+                </>}
+
               </TableBody>
             </Table>
           </TableContainer>
